@@ -81,7 +81,8 @@ function plot() {
 }
 
 function f(x) {
-    return Math.pow(x, 2);
+//    return Math.pow(x, 2); // parabola
+    return Math.sin(x);
 }
 
 function mouseDragged() {
@@ -136,11 +137,12 @@ function draw() {
     drawAxes(xMargin, yMargin, xRange, yRange, xSize, ySize);
     
     // draw function
+    var step = 0.1;
     stroke(255, 0, 0);
-    for (var x = -xRange / 2; x <= xRange / 2 - 1; x += 0.1) {
+    for (var x = -xRange / 2; x <= xRange / 2 - 1; x += step) {
         
         var y = f(x);
-        var yNext = f(x + 1);
+        var yNext = f(x + step);
         
         if (y >= yRange / 2) continue;
         if (yNext >= yRange / 2) continue;
@@ -148,7 +150,7 @@ function draw() {
         var xOff = (x * xSize);
         var yOff = -y * ySize;
         
-        var nextXOff = (x + 1) * xSize;
+        var nextXOff = (x + step) * xSize;
         var nextYOff = -yNext * ySize;
         
         line(xMargin + xOff, yMargin + yOff, xMargin + nextXOff, yMargin + nextYOff);
