@@ -1,22 +1,33 @@
 let WIDTH = 900;
 let HEIGHT = 600;
-
 let FONT_SIZE = 14;
-
-var inputField;
-var inputButton;
 
 var parser;
 
-var screenX;
-var screenY;
+// GUI
+var inputField;
+var inputButton;
+var xSizeSlider;
+var ySizeSlider;
+var xRangeSlider;
+var yRangeSlider;
 
-var dragging;
-
+// mouse control
+var screenX = 0;
+var screenY = 0;
+var dragging = false;
 var zoom = 1.00;
 var zMin = 0.05;
 var zMax = 9.00;
 var sensativity = 0.005;
+
+// graph sizing
+var xMargin = 0;
+var yMargin = 200;
+var xSize = 40;
+var ySize = 25;
+var xRange = 50;
+var yRange = 50;
 
 function setup() {
     
@@ -29,6 +40,8 @@ function setup() {
     textSize(FONT_SIZE);
     textFont(MATHSFONT_REGULAR);
     
+    parser = new Parser();
+    
     inputField = createInput();
     inputField.position(20, HEIGHT + 10);
     
@@ -36,10 +49,17 @@ function setup() {
     inputButton.position(inputField.x + inputField.width + 20, HEIGHT + 10);
     inputButton.mousePressed(plot);
     
-    parser = new Parser();
+    xRangeSlider = createSlider(0, 50, xRange, 2);
+    xRangeSlider.position(WIDTH - 100, HEIGHT + 10);
     
-    screenX = 0;
-    screenY = 0;
+    yRangeSlider = createSlider(0, 50, yRange, 2);
+    yRangeSlider.position(WIDTH - 100, HEIGHT + 30);
+    
+    xSizeSlider = createSlider(0, 50, xSize);
+    xSizeSlider.position(WIDTH - 100, HEIGHT + 50);
+    
+    ySizeSlider = createSlider(0, 50, ySize);
+    ySizeSlider.position(WIDTH - 100, HEIGHT + 70);
     
     lastDragX = 0;
     lastDragY = 0;
@@ -57,6 +77,8 @@ function f(x) {
 }
 
 function mouseDragged() {
+    
+    if (mouseX > WIDTH || mouseY > HEIGHT) return;
     
     if (!dragging) {
         lastDragX = mouseX;
@@ -97,14 +119,10 @@ function draw() {
     scale(zoom);
     translate(screenX, screenY);
     
-    var xMargin = 0;
-    var yMargin = 200;
-    
-    var xRange = 50;
-    var yRange = 50;
-    
-    var xSize = 40;
-    var ySize = 25;
+    xRange = xRangeSlider.value();
+    yRange = yRangeSlider.value();
+    xSize = xSizeSlider.value();
+    ySize = ySizeSlider.value();
     
     drawAxes(xMargin, yMargin, xRange, yRange, xSize, ySize);
     
