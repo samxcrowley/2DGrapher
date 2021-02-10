@@ -43,23 +43,31 @@ function setup() {
     parser = new Parser();
     
     inputField = createInput();
-    inputField.position(20, HEIGHT + 10);
+    inputField.position(10, 10);
     
     inputButton = createButton('Plot');
-    inputButton.position(inputField.x + inputField.width + 20, HEIGHT + 10);
+    inputButton.position(inputField.width + 10, 10);
     inputButton.mousePressed(plot);
     
-    xRangeSlider = createSlider(0, 50, xRange, 2);
-    xRangeSlider.position(WIDTH - 100, HEIGHT + 10);
+    xRangeSlider = createSlider(2, 200, xRange, 2);
+    xRangeSlider.position(10, HEIGHT + 20);
+    xRangeP = createP('x-range');
+    xRangeP.position(xRangeSlider.x * 2 + xRangeSlider.width, xRangeSlider.y - 15);
     
-    yRangeSlider = createSlider(0, 50, yRange, 2);
-    yRangeSlider.position(WIDTH - 100, HEIGHT + 30);
+    yRangeSlider = createSlider(2, 200, yRange, 2);
+    yRangeSlider.position(10, HEIGHT + 40);
+    yRangeP = createP('y-range');
+    yRangeP.position(yRangeSlider.x * 2 + yRangeSlider.width, yRangeSlider.y - 15);
     
-    xSizeSlider = createSlider(0, 50, xSize);
-    xSizeSlider.position(WIDTH - 100, HEIGHT + 50);
+    xSizeSlider = createSlider(0, 200, xSize);
+    xSizeSlider.position(xRangeSlider.width + 100, HEIGHT + 20);
+    xSizeP = createP('x-size');
+    xSizeP.position(xSizeSlider.x + xSizeSlider.width + 10, xSizeSlider.y - 15);
     
-    ySizeSlider = createSlider(0, 50, ySize);
-    ySizeSlider.position(WIDTH - 100, HEIGHT + 70);
+    ySizeSlider = createSlider(0, 200, ySize);
+    ySizeSlider.position(xRangeSlider.width + 100, HEIGHT + 40);
+    ySizeP = createP('y-size');
+    ySizeP.position(ySizeSlider.x + ySizeSlider.width + 10, ySizeSlider.y - 15);
     
     lastDragX = 0;
     lastDragY = 0;
@@ -116,22 +124,26 @@ function draw() {
     strokeWeight(2);
     fill(255);
     
-    scale(zoom);
-    translate(screenX, screenY);
-    
     xRange = xRangeSlider.value();
     yRange = yRangeSlider.value();
     xSize = xSizeSlider.value();
     ySize = ySizeSlider.value();
     
+    scale(zoom);
+    
+    translate(screenX, screenY);
+    
     drawAxes(xMargin, yMargin, xRange, yRange, xSize, ySize);
     
     // draw function
     stroke(255, 0, 0);
-    for (var x = -5; x < 5; x++) {
+    for (var x = -xRange / 2; x <= xRange / 2 - 1; x += 0.1) {
         
         var y = f(x);
         var yNext = f(x + 1);
+        
+        if (y >= yRange / 2) continue;
+        if (yNext >= yRange / 2) continue;
         
         var xOff = (x * xSize);
         var yOff = -y * ySize;
