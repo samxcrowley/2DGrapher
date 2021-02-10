@@ -49,12 +49,12 @@ function setup() {
     inputButton.position(inputField.width + 10, 10);
     inputButton.mousePressed(plot);
     
-    xRangeSlider = createSlider(2, 200, xRange, 2);
+    xRangeSlider = createSlider(2, 200, xRange, 0.1);
     xRangeSlider.position(10, HEIGHT + 20);
     xRangeP = createP('x-range');
     xRangeP.position(xRangeSlider.x * 2 + xRangeSlider.width, xRangeSlider.y - 15);
     
-    yRangeSlider = createSlider(2, 200, yRange, 2);
+    yRangeSlider = createSlider(2, 200, yRange, 0.1);
     yRangeSlider.position(10, HEIGHT + 40);
     yRangeP = createP('y-range');
     yRangeP.position(yRangeSlider.x * 2 + yRangeSlider.width, yRangeSlider.y - 15);
@@ -82,7 +82,7 @@ function plot() {
 
 function f(x) {
 //    return Math.pow(x, 2); // parabola
-    return Math.sin(x);
+    return Math.sin(x) * 2;
 }
 
 function mouseDragged() {
@@ -137,9 +137,10 @@ function draw() {
     drawAxes(xMargin, yMargin, xRange, yRange, xSize, ySize);
     
     // draw function
-    var step = 0.1;
     stroke(255, 0, 0);
-    for (var x = -xRange / 2; x <= xRange / 2 - 1; x += step) {
+    
+    var step = 0.1;
+    for (var x = -xRange / 2; x <= xRange / 2; x += step) {
         
         var y = f(x);
         var yNext = f(x + step);
@@ -147,7 +148,7 @@ function draw() {
         if (y >= yRange / 2) continue;
         if (yNext >= yRange / 2) continue;
         
-        var xOff = (x * xSize);
+        var xOff = x * xSize;
         var yOff = -y * ySize;
         
         var nextXOff = (x + step) * xSize;
@@ -161,10 +162,16 @@ function draw() {
 
 function drawAxes(xMargin, yMargin, xRange, yRange, xSize, ySize) {
     
-    var lowX = -(xRange / 2);
-    var lowY = -(yRange / 2);
-    var highX = xRange / 2;
-    var highY = yRange / 2;
+    // make range a positive even number for nice rendering
+    var intXRange = Math.floor(xRange);
+    if (intXRange % 2 != 0) intXRange--;
+    var intYRange = Math.floor(yRange);
+    if (intYRange % 2 != 0) intYRange--;
+    
+    var lowX = -(intXRange / 2);
+    var lowY = -(intYRange / 2);
+    var highX = intXRange / 2;
+    var highY = intYRange / 2;
     
     // draw x-axis line
     line(xMargin - ((xRange / 2) * xSize), yMargin, xMargin + ((xRange / 2) * xSize), yMargin)
@@ -172,8 +179,8 @@ function drawAxes(xMargin, yMargin, xRange, yRange, xSize, ySize) {
     // draw x-axis number markings
     for (var x = lowX; x <= highX; x++) {
         
-        //if (x % 2 != 0) continue;
         if (x == 0) continue;
+        if (x % 1 != 0) continue;
         
         var xPos = xMargin + (x * xSize);
         line(xPos, yMargin - 5, xPos, yMargin + 5);
@@ -184,14 +191,14 @@ function drawAxes(xMargin, yMargin, xRange, yRange, xSize, ySize) {
         
     }
     
-    // draw y-axis
+    // draw y-axis line
     line(xMargin, yMargin - ((yRange / 2) * ySize), xMargin, yMargin + ((yRange / 2) * ySize))
     
     // draw y-axis number markings
     for (var y = lowY; y <= highY; y++) {
         
-        //if (y % 2 != 0) continue;
         if (y == 0) continue;
+        if (y % 1 != 0) continue;
 
         var yPos = yMargin + (y * ySize);
         line(xMargin - 5, yPos, xMargin + 5, yPos);
