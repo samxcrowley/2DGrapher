@@ -52,6 +52,10 @@ function plot() {
     
 }
 
+function f(x) {
+    return Math.pow(x, 2);
+}
+
 function mouseDragged() {
     
     if (!dragging) {
@@ -96,20 +100,20 @@ function draw() {
     var xMargin = 0;
     var yMargin = 200;
     
-    var xRange = 20;
-    var yRange = 40;
+    var xRange = 50;
+    var yRange = 50;
     
-    var xSize = 25;
+    var xSize = 40;
     var ySize = 25;
     
     drawAxes(xMargin, yMargin, xRange, yRange, xSize, ySize);
     
-    // draw parabola
+    // draw function
     stroke(255, 0, 0);
     for (var x = -5; x < 5; x++) {
         
-        var y = Math.pow(x, 2);
-        var yNext = Math.pow(x + 1, 2);
+        var y = f(x);
+        var yNext = f(x + 1);
         
         var xOff = (x * xSize);
         var yOff = -y * ySize;
