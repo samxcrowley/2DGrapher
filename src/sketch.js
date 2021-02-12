@@ -41,7 +41,7 @@ var step = 0.1;
 function setup() {
     
     createCanvas(WIDTH, HEIGHT, WEBGL);
-    frameRate(25);
+    frameRate(2);
     
     MATHSFONT_REGULAR = loadFont("font/Montserrat-Regular.otf");
     MATHSFONT_LIGHT = loadFont("font/Montserrat-Light.otf");
@@ -72,7 +72,8 @@ function plot() {
         xValues.push(x);
         
         // replace 'x' in RPN string with number value
-        var replacedRPNString = rpnString.replace('x', str(x));
+        var replacedRPNString = rpnString.replace(/x/g, str(x));
+        console.log(replacedRPNString);
         
         var y = parser.calculateRPN(replacedRPNString);
         yValues.push(y);
