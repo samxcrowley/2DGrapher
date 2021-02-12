@@ -171,7 +171,7 @@ function drawAxes() {
         var yPos = yMargin + (y * ySize);
         line(xMargin - 5, yPos, xMargin + 5, yPos);
         
-        s = str(y);
+        s = str(-y);
         sWidth = textWidth(s);
         text(s, xMargin + 15, yPos - (sWidth / 2));
 
