@@ -36,7 +36,7 @@ var yRange = 50;
 // function stuff
 var xValues = [];
 var yValues = [];
-var step = 1;
+var step = 0.1;
 
 function setup() {
     
@@ -183,10 +183,10 @@ function drawAxes() {
 function createGUI() {
     
     inputField = createInput();
-    inputField.position(10, 10);
+    inputField.position(WIDTH - 400, HEIGHT + 20);
     
     inputButton = createButton('Plot');
-    inputButton.position(inputField.width + 10, 10);
+    inputButton.position(WIDTH - 400 + inputField.width + 10, HEIGHT + 20);
     inputButton.mousePressed(plot);
     
     xRangeSlider = createSlider(2, 200, xRange, 0.1);
