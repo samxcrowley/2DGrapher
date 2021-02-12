@@ -33,6 +33,11 @@ var ySize = 25;
 var xRange = 50;
 var yRange = 50;
 
+// function stuff
+var xValues = [];
+var yValues = [];
+var step = 1;
+
 function setup() {
     
     createCanvas(WIDTH, HEIGHT, WEBGL);
@@ -53,13 +58,27 @@ function setup() {
 
 function plot() {
     
+    // convert user input to RPN notation
+    var rawInput = inputField.value();
+    var rpnString = parser.infixToRPN(rawInput);
     
+    // clear x and y values arrays
+    xValues = [];
+    yValues = [];
     
-}
-
-function f(x) {
-//    return Math.pow(x, 2); // parabola
-    return Math.sin(x) * 2;
+    // loop through all values of x and calculate corresponding y value
+    for (var x = -xRange / 2; x <= xRange / 2; x += step) {
+        
+        xValues.push(x);
+        
+        // replace 'x' in RPN string with number value
+        var replacedRPNString = rpnString.replace('x', str(x));
+        
+        var y = parser.calculateRPN(replacedRPNString);
+        yValues.push(y);
+        
+    }
+    
 }
 
 function draw() {
@@ -87,11 +106,12 @@ function drawFunction() {
     
     stroke(255, 0, 0);
     
-    var step = 0.1;
-    for (var x = -xRange / 2; x <= xRange / 2; x += step) {
+    for (var i = 0; i <= xValues.length; i++) {
         
-        var y = f(x);
-        var yNext = f(x + step);
+        var x = xValues[i];
+        var xNext = xValues[i + 1];
+        var y = yValues[i];
+        var yNext = yValues[i + 1];
         
         if (y >= yRange / 2) continue;
         if (yNext >= yRange / 2) continue;
@@ -159,6 +179,7 @@ function drawAxes() {
     
 }
 
+// create HTML elements such as input textbox and button, and sliders
 function createGUI() {
     
     inputField = createInput();
@@ -187,6 +208,11 @@ function createGUI() {
     ySizeSlider.position(xRangeSlider.width + 100, HEIGHT + 40);
     ySizeP = createP('y-size');
     ySizeP.position(ySizeSlider.x + ySizeSlider.width + 10, ySizeSlider.y - 15);
+    
+    xRangeSlider.input(plot);
+    yRangeSlider.input(plot);
+    xSizeSlider.input(plot);
+    ySizeSlider.input(plot);
     
 }
 
