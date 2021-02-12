@@ -1,5 +1,5 @@
-let WIDTH = 900;
-let HEIGHT = 600;
+let WIDTH = 1280;
+let HEIGHT = 720;
 let FONT_SIZE = 14;
 
 var parser;
@@ -15,11 +15,15 @@ var yRangeSlider;
 // mouse control
 var screenX = 0;
 var screenY = 0;
+var lastDragX = 0;
+var lastDragY = 0;
 var dragging = false;
+
+// zoom control
 var zoom = 1.00;
 var zMin = 0.05;
 var zMax = 9.00;
-var sensativity = 0.005;
+var sensativity = 0.001;
 
 // graph sizing
 var xMargin = 0;
@@ -32,6 +36,7 @@ var yRange = 50;
 function setup() {
     
     createCanvas(WIDTH, HEIGHT, WEBGL);
+    frameRate(25);
     
     MATHSFONT_REGULAR = loadFont("font/Montserrat-Regular.otf");
     MATHSFONT_LIGHT = loadFont("font/Montserrat-Light.otf");
@@ -42,35 +47,7 @@ function setup() {
     
     parser = new Parser();
     
-    inputField = createInput();
-    inputField.position(10, 10);
-    
-    inputButton = createButton('Plot');
-    inputButton.position(inputField.width + 10, 10);
-    inputButton.mousePressed(plot);
-    
-    xRangeSlider = createSlider(2, 200, xRange, 0.1);
-    xRangeSlider.position(10, HEIGHT + 20);
-    xRangeP = createP('x-range');
-    xRangeP.position(xRangeSlider.x * 2 + xRangeSlider.width, xRangeSlider.y - 15);
-    
-    yRangeSlider = createSlider(2, 200, yRange, 0.1);
-    yRangeSlider.position(10, HEIGHT + 40);
-    yRangeP = createP('y-range');
-    yRangeP.position(yRangeSlider.x * 2 + yRangeSlider.width, yRangeSlider.y - 15);
-    
-    xSizeSlider = createSlider(0, 200, xSize);
-    xSizeSlider.position(xRangeSlider.width + 100, HEIGHT + 20);
-    xSizeP = createP('x-size');
-    xSizeP.position(xSizeSlider.x + xSizeSlider.width + 10, xSizeSlider.y - 15);
-    
-    ySizeSlider = createSlider(0, 200, ySize);
-    ySizeSlider.position(xRangeSlider.width + 100, HEIGHT + 40);
-    ySizeP = createP('y-size');
-    ySizeP.position(ySizeSlider.x + ySizeSlider.width + 10, ySizeSlider.y - 15);
-    
-    lastDragX = 0;
-    lastDragY = 0;
+    createGUI();
     
 }
 
@@ -85,58 +62,29 @@ function f(x) {
     return Math.sin(x) * 2;
 }
 
-function mouseDragged() {
-    
-    if (mouseX > WIDTH || mouseY > HEIGHT) return;
-    
-    if (!dragging) {
-        lastDragX = mouseX;
-        lastDragY = mouseY;
-    }
-    
-    dragging = true;
-    
-    var xDiff = mouseX - lastDragX;
-    var yDiff = mouseY - lastDragY;
-    
-    screenX += xDiff;
-    screenY += yDiff;
-    
-    lastDragX = mouseX;
-    lastDragY = mouseY;
-    
-}
-
-function mouseReleased() {
-    dragging = false;
-}
-
-function mouseWheel(event) {
-    zoom -= sensativity * event.delta;
-    zoom = constrain(zoom, zMin, zMax);
-    return false;
-}
-
 function draw() {
     
     background(17);
-    
-    stroke(255);
-    strokeWeight(2);
-    fill(255);
     
     xRange = xRangeSlider.value();
     yRange = yRangeSlider.value();
     xSize = xSizeSlider.value();
     ySize = ySizeSlider.value();
     
+    translate(screenX, screenY);
     scale(zoom);
     
-    translate(screenX, screenY);
+    stroke(255);
+    strokeWeight(2);
+    fill(255);
     
-    drawAxes(xMargin, yMargin, xRange, yRange, xSize, ySize);
+    drawAxes();
+    drawFunction();
     
-    // draw function
+}
+
+function drawFunction() {
+    
     stroke(255, 0, 0);
     
     var step = 0.1;
@@ -160,7 +108,7 @@ function draw() {
     
 }
 
-function drawAxes(xMargin, yMargin, xRange, yRange, xSize, ySize) {
+function drawAxes() {
     
     // make range a positive even number for nice rendering
     var intXRange = Math.floor(xRange);
@@ -211,9 +159,68 @@ function drawAxes(xMargin, yMargin, xRange, yRange, xSize, ySize) {
     
 }
 
+function createGUI() {
+    
+    inputField = createInput();
+    inputField.position(10, 10);
+    
+    inputButton = createButton('Plot');
+    inputButton.position(inputField.width + 10, 10);
+    inputButton.mousePressed(plot);
+    
+    xRangeSlider = createSlider(2, 200, xRange, 0.1);
+    xRangeSlider.position(10, HEIGHT + 20);
+    xRangeP = createP('x-range');
+    xRangeP.position(xRangeSlider.x * 2 + xRangeSlider.width, xRangeSlider.y - 15);
+    
+    yRangeSlider = createSlider(2, 200, yRange, 0.1);
+    yRangeSlider.position(10, HEIGHT + 40);
+    yRangeP = createP('y-range');
+    yRangeP.position(yRangeSlider.x * 2 + yRangeSlider.width, yRangeSlider.y - 15);
+    
+    xSizeSlider = createSlider(0, 200, xSize);
+    xSizeSlider.position(xRangeSlider.width + 100, HEIGHT + 20);
+    xSizeP = createP('x-size');
+    xSizeP.position(xSizeSlider.x + xSizeSlider.width + 10, xSizeSlider.y - 15);
+    
+    ySizeSlider = createSlider(0, 200, ySize);
+    ySizeSlider.position(xRangeSlider.width + 100, HEIGHT + 40);
+    ySizeP = createP('y-size');
+    ySizeP.position(ySizeSlider.x + ySizeSlider.width + 10, ySizeSlider.y - 15);
+    
+}
 
+function mouseDragged() {
+    
+    if (mouseX > WIDTH || mouseY > HEIGHT) return;
+    
+    if (!dragging) {
+        lastDragX = mouseX;
+        lastDragY = mouseY;
+    }
+    
+    dragging = true;
+    
+    var xDiff = mouseX - lastDragX;
+    var yDiff = mouseY - lastDragY;
+    
+    screenX += xDiff;
+    screenY += yDiff;
+    
+    lastDragX = mouseX;
+    lastDragY = mouseY;
+    
+}
 
+function mouseReleased() {
+    dragging = false;
+}
 
+function mouseWheel(event) {
+    zoom -= sensativity * event.delta;
+    zoom = constrain(zoom, zMin, zMax);
+    return false;
+}
 
 
 
