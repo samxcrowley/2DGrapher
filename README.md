@@ -2,6 +2,8 @@
 
 Takes in a user's inputted expression and plots it on a two-dimensional graph.
 
+Live project can be found at: https://samxcrowley.github.io/2DGrapher/
+
 Features:
 
 * Plot a two-dimensional curve
