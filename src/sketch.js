@@ -41,7 +41,7 @@ var step = 0.1;
 function setup() {
     
     createCanvas(WIDTH, HEIGHT, WEBGL);
-    frameRate(2);
+    frameRate(24);
     
     MATHSFONT_REGULAR = loadFont("font/Montserrat-Regular.otf");
     MATHSFONT_LIGHT = loadFont("font/Montserrat-Light.otf");
